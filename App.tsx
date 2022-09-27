@@ -1,20 +1,27 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  RobotoCondensed_300Light,
+  RobotoCondensed_300Light_Italic,
+  RobotoCondensed_400Regular,
+  RobotoCondensed_400Regular_Italic,
+  RobotoCondensed_700Bold,
+  RobotoCondensed_700Bold_Italic,
+  useFonts,
+} from "@expo-google-fonts/roboto-condensed";
+import AppLoading from "expo-app-loading";
+import App from "./src";
+import * as serviceRegistration from "./src/serviceWorkerRegistration";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+export default function Main() {
+  const [fontsLoaded] = useFonts({
+    RobotoCondensed_300Light,
+    RobotoCondensed_300Light_Italic,
+    RobotoCondensed_400Regular,
+    RobotoCondensed_400Regular_Italic,
+    RobotoCondensed_700Bold,
+    RobotoCondensed_700Bold_Italic,
+  });
+
+  return fontsLoaded ? <App /> : <AppLoading />;
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+serviceRegistration.register();

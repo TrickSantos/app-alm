@@ -1,31 +1,27 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   ImageBackground,
   FlatList,
   TouchableOpacity,
+  ListRenderItem,
 } from "react-native";
 import Logo from "../../../assets/images/logo.png";
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import S from "./styles";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootSackParamList } from "../Routes/index.routes";
+import { AppStackParamsList } from "../Routes/app.routes";
+import { useAuth } from "../../contexts/Authentication";
+import { Evento } from "../../types";
 
-const data = [
-  { id: "aushduahsdsa", evento: "Evento 1", status: true },
-  { id: "çlzxkahsdssaa", evento: "Evento 2", status: true },
-  { id: "açalsopzixcz", evento: "Evento 3", status: false },
-  { id: "pzoxiczzxxxa", evento: "Evento 4", status: true },
-];
-
-type Props = NativeStackScreenProps<RootSackParamList, "Eventos">;
+type Props = NativeStackScreenProps<AppStackParamsList, "Eventos">;
 const Item = ({ item, onPress }: any) => {
   return (
     <TouchableOpacity style={S.item} onPress={onPress}>
-      <Text style={S.itemText}>{item.evento}</Text>
-      {item.status ? (
+      <Text style={S.itemText}>{item.nome}</Text>
+      {item.ativo ? (
         <AntDesign name="right" size={24} color="#CCCCCC" />
       ) : (
         <FontAwesome5 name="lock" size={24} color="#CCCCCC" />
@@ -35,9 +31,25 @@ const Item = ({ item, onPress }: any) => {
 };
 
 const Eventos = ({ navigation }: Props) => {
-  const renderItem = ({ item }: any) => {
-    return <Item item={item} onPress={() => navigation.navigate("Scanner")} />;
-  };
+  const { socket } = useAuth();
+  const [eventos, setEventos] = useState<Evento[]>([]);
+
+  const renderItem: ListRenderItem<Evento> = ({ item }) => (
+    <Item item={item} onPress={() => navigation.navigate("Scanner", item)} />
+  );
+
+  useEffect(() => {
+    socket.emit("evento:index", (res: Evento[]) => setEventos(res));
+    socket.on("evento:created", () => {
+      socket.emit("evento:index", (res: Evento[]) => setEventos(res));
+    });
+    socket.on("evento:destroyed", () =>
+      socket.emit("evento:index", (res: Evento[]) => setEventos(res))
+    );
+    socket.on("evento:updated", () => {
+      socket.emit("evento:index", (res: Evento[]) => setEventos(res));
+    });
+  }, []);
 
   return (
     <View style={S.container}>
@@ -51,9 +63,9 @@ const Eventos = ({ navigation }: Props) => {
           </View>
           <View style={S.main}>
             <FlatList
-              data={data}
+              data={eventos}
               renderItem={renderItem}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(evento) => evento.id.toString()}
             />
           </View>
         </ImageBackground>

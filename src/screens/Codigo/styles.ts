@@ -20,7 +20,7 @@ export default StyleSheet.create({
     marginRight: "auto",
   },
   cellRoot: {
-    width: 40,
+    width: 30,
     height: 60,
     justifyContent: "center",
     alignItems: "center",
@@ -29,7 +29,7 @@ export default StyleSheet.create({
   },
   cellText: {
     color: "#FFFFFF",
-    fontSize: 36,
+    fontSize: 32,
     textAlign: "center",
     fontFamily: "RobotoCondensed_400Regular",
   },

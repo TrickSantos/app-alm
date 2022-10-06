@@ -6,12 +6,17 @@ import Logo from "../../../assets/images/logo.png";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootSackParamList } from "../Routes/index.routes";
+import { AuthStackParamList } from "../Routes/auth.routes";
+import { useAuth } from "../../contexts/Authentication";
 
-type Props = NativeStackScreenProps<RootSackParamList, "Login">;
+type Props = NativeStackScreenProps<AuthStackParamList, "Login">;
 
 const Login = ({ navigation }: Props) => {
-  const onLogin = () => navigation.navigate("Eventos");
+  const { login } = useAuth();
+
+  const onLogin = async () => {
+    await login("patrick.tafa@gmail.com", "trick123");
+  };
 
   return (
     <View style={S.container}>

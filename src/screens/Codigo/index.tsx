@@ -7,20 +7,35 @@ import {
   useClearByFocusCell,
 } from "react-native-confirmation-code-field";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootSackParamList } from "../Routes/index.routes";
 import styles from "./styles";
+import { AppStackParamsList } from "../Routes/app.routes";
+import { useAuth } from "../../contexts/Authentication";
 
-type Props = NativeStackScreenProps<RootSackParamList, "Codigo">;
-const CELL_COUNT = 6;
+type Props = NativeStackScreenProps<AppStackParamsList, "Codigo">;
+const CELL_COUNT = 7;
 
-const Codigo = ({ navigation }: Props) => {
+const Codigo = ({ navigation, route: { params } }: Props) => {
+  const { socket } = useAuth();
   const [value, setValue] = useState("");
-  const onConfirm = () => navigation.navigate("CheckIn");
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
   });
+
+  const onConfirm = () => {
+    socket.emit("usuario:find", value, (res: any) => {
+      if (res.status === "error") {
+        navigation.popToTop();
+      } else {
+        navigation.navigate("CheckIn", {
+          eventoId: params.eventoId,
+          clubeId: res.clubeId,
+          usuarioId: res.id,
+        });
+      }
+    });
+  };
 
   return (
     <SafeAreaView style={styles.container}>

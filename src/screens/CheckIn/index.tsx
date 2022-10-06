@@ -1,14 +1,25 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import { View, Text, TouchableOpacity } from "react-native";
+import { AppStackParamsList } from "../Routes/app.routes";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import S from "./styles";
-import { RootSackParamList } from "../Routes/index.routes";
+import { useAuth } from "../../contexts/Authentication";
 
-type Props = NativeStackScreenProps<RootSackParamList, "CheckIn">;
+type Props = NativeStackScreenProps<AppStackParamsList, "CheckIn">;
 
-const CheckIn = ({ navigation }: Props) => {
-  const onConfirm = () => navigation.popToTop();
+const CheckIn = ({ navigation, route: { params } }: Props) => {
+  const { socket } = useAuth();
+
+  const onConfirm = () => {
+    socket.emit("presenca:create", params, (res: any) => {
+      if (res.status === "error") {
+        navigation.popToTop();
+      } else {
+        navigation.popToTop();
+      }
+    });
+  };
 
   return (
     <View style={S.container}>

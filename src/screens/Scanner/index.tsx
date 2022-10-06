@@ -1,4 +1,4 @@
-import { View, Text, Button, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Constants } from "expo-barcode-scanner";
 import { AntDesign } from "@expo/vector-icons";
@@ -9,20 +9,35 @@ import {
   requestCameraPermissionsAsync,
 } from "expo-camera";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootSackParamList } from "../Routes/index.routes";
+import { AppStackParamsList } from "../Routes/app.routes";
+import { useAuth } from "../../contexts/Authentication";
 
-type Props = NativeStackScreenProps<RootSackParamList, "Scanner">;
+type Props = NativeStackScreenProps<AppStackParamsList, "Scanner">;
 
-const Scanner = ({ navigation }: Props) => {
+const Scanner = ({ navigation, route: { params } }: Props) => {
+  const { socket } = useAuth();
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   const onBarCodeScanned = (res: BarCodeScanningResult) => {
     console.log("escaneado");
     console.log(res.data);
-    navigation.navigate("CheckIn");
+    socket.emit("usuario:find", res.data, (res: any) => {
+      if (res.status === "error") {
+        navigation.popToTop();
+      } else {
+        navigation.navigate("CheckIn", {
+          eventoId: params.id,
+          clubeId: res.clubeId,
+          usuarioId: res.id,
+        });
+      }
+    });
   };
 
-  const TypeCode = () => navigation.navigate("Codigo");
+  const TypeCode = () =>
+    navigation.navigate("Codigo", {
+      eventoId: params.id,
+    });
 
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {

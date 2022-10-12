@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, Button } from "react-native";
-import React, { useEffect } from "react";
+import { View, TouchableOpacity } from "react-native";
+import React from "react";
 import { Constants } from "expo-barcode-scanner";
 import { AntDesign } from "@expo/vector-icons";
 import styles from "./styles";
@@ -15,7 +15,6 @@ type Props = NativeStackScreenProps<AppStackParamsList, "Scanner">;
 const Scanner = ({ navigation, route: { params } }: Props) => {
   const { socket } = useAuth();
   const toast = useToast();
-  const [permission, requestPermission] = Camera.useCameraPermissions();
 
   const onBarCodeScanned = (res: BarCodeScanningResult) => {
     console.log("escaneado");
@@ -42,32 +41,6 @@ const Scanner = ({ navigation, route: { params } }: Props) => {
     navigation.navigate("Codigo", {
       eventoId: params.id,
     });
-
-  useEffect(() => {
-    const getBarCodeScannerPermissions = async () => {
-      if (!permission?.granted) {
-        await requestPermission();
-      }
-    };
-
-    getBarCodeScannerPermissions();
-  }, []);
-
-  if (!permission) {
-    return <Text>Requesting for camera permission</Text>;
-  }
-
-  if (!permission.granted) {
-    // Camera permissions are not granted yet
-    return (
-      <View style={styles.container}>
-        <Text style={{ textAlign: "center" }}>
-          Precisamos de sua permissão para mostrar a camera
-        </Text>
-        <Button onPress={requestPermission} title="grant permission" />
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>

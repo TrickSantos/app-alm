@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
 import Input from "../../components/Input";
 import S from "./styles";
@@ -13,9 +13,11 @@ type Props = NativeStackScreenProps<AuthStackParamList, "Login">;
 
 const Login = ({ navigation }: Props) => {
   const { login } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const onLogin = async () => {
-    await login("patrick.tafa@gmail.com", "trick123");
+    await login(email, password);
   };
 
   return (
@@ -30,10 +32,12 @@ const Login = ({ navigation }: Props) => {
               iconPrefix={
                 <FontAwesome5 name="user-alt" size={18} color="#CCCCCC" />
               }
-              value="email"
+              value={email}
+              onChangeText={setEmail}
             />
             <Input
-              value="email"
+              value={password}
+              onChangeText={setPassword}
               secureTextEntry
               iconPrefix={
                 <FontAwesome5 name="lock" size={18} color="#CCCCCC" />

@@ -32,7 +32,7 @@ const CheckIn = ({
           toast.show("Erro ao confirmar presença", { type: "danger" });
           navigation.popToTop();
         } else {
-          toast.show("Erro ao confirmar presença", { type: "sucess" });
+          toast.show("Presença confirmada!", { type: "sucess" });
           navigation.popToTop();
         }
       }

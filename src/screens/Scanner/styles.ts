@@ -9,8 +9,10 @@ const style = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F2621A",
     paddingHorizontal: "10%",
-    paddingVertical: "50%",
+    paddingBottom: "20%",
+    paddingTop: "5%",
   },
+
   camera: {
     borderRadius: 50,
     flex: 1,

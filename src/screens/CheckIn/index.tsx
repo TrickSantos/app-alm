@@ -5,6 +5,8 @@ import { AppStackParamsList } from "../Routes/app.routes";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import S from "./styles";
 import { useAuth } from "../../contexts/Authentication";
+import HeaderBar from "../../components/HeaderBar";
+import { useToast } from "react-native-toast-notifications";
 
 type Props = NativeStackScreenProps<AppStackParamsList, "CheckIn">;
 
@@ -15,7 +17,7 @@ const CheckIn = ({
   },
 }: Props) => {
   const { socket } = useAuth();
-  console.log(usuario);
+  const toast = useToast();
 
   const onConfirm = () => {
     socket.emit(
@@ -27,8 +29,10 @@ const CheckIn = ({
       },
       (res: any) => {
         if (res.status === "error") {
+          toast.show("Erro ao confirmar presença", { type: "danger" });
           navigation.popToTop();
         } else {
+          toast.show("Erro ao confirmar presença", { type: "sucess" });
           navigation.popToTop();
         }
       }
@@ -37,6 +41,7 @@ const CheckIn = ({
 
   return (
     <View style={S.container}>
+      <HeaderBar />
       <View style={S.main}>
         <View style={S.card}>
           <AntDesign name="checkcircleo" size={60} color="#FFFFFF" />

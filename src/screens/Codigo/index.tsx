@@ -1,5 +1,11 @@
-import { View, Text, SafeAreaView, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  TouchableOpacity,
+  BackHandler,
+} from "react-native";
+import React, { useEffect, useState } from "react";
 import {
   CodeField,
   Cursor,
@@ -10,12 +16,15 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styles from "./styles";
 import { AppStackParamsList } from "../Routes/app.routes";
 import { useAuth } from "../../contexts/Authentication";
+import HeaderBar from "../../components/HeaderBar";
+import { useToast } from "react-native-toast-notifications";
 
 type Props = NativeStackScreenProps<AppStackParamsList, "Codigo">;
 const CELL_COUNT = 7;
 
 const Codigo = ({ navigation, route: { params } }: Props) => {
   const { socket } = useAuth();
+  const toast = useToast();
   const [value, setValue] = useState("");
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
@@ -26,7 +35,12 @@ const Codigo = ({ navigation, route: { params } }: Props) => {
   const onConfirm = () => {
     socket.emit("usuario:find", value, (res: any) => {
       if (res.status === "error") {
-        navigation.popToTop();
+        res.message.forEach((msg: string) =>
+          toast.show(msg, {
+            type: "danger",
+          })
+        );
+        navigation.goBack();
       } else {
         navigation.navigate("CheckIn", {
           eventoId: params.eventoId,
@@ -37,8 +51,21 @@ const Codigo = ({ navigation, route: { params } }: Props) => {
     });
   };
 
+  const backActionHandler = () => {
+    navigation.goBack();
+    return true;
+  };
+
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", backActionHandler);
+
+    return () =>
+      BackHandler.removeEventListener("hardwareBackPress", backActionHandler);
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
+      <HeaderBar />
       <Text style={styles.title}>Digite o código</Text>
       <CodeField
         ref={ref}

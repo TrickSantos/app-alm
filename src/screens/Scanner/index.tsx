@@ -1,29 +1,33 @@
-import { View, Text, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
+import { View, Text, TouchableOpacity, Button } from "react-native";
+import React, { useEffect } from "react";
 import { Constants } from "expo-barcode-scanner";
 import { AntDesign } from "@expo/vector-icons";
 import styles from "./styles";
-import {
-  BarCodeScanningResult,
-  Camera,
-  requestCameraPermissionsAsync,
-} from "expo-camera";
+import { BarCodeScanningResult, Camera } from "expo-camera";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AppStackParamsList } from "../Routes/app.routes";
 import { useAuth } from "../../contexts/Authentication";
+import HeaderBar from "../../components/HeaderBar";
+import { useToast } from "react-native-toast-notifications";
 
 type Props = NativeStackScreenProps<AppStackParamsList, "Scanner">;
 
 const Scanner = ({ navigation, route: { params } }: Props) => {
   const { socket } = useAuth();
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const toast = useToast();
+  const [permission, requestPermission] = Camera.useCameraPermissions();
 
   const onBarCodeScanned = (res: BarCodeScanningResult) => {
     console.log("escaneado");
     console.log(res.data);
     socket.emit("usuario:find", res.data, (res: any) => {
       if (res.status === "error") {
-        navigation.popToTop();
+        res.message.forEach((msg: string) =>
+          toast.show(msg, {
+            type: "danger",
+          })
+        );
+        navigation.goBack();
       } else {
         navigation.navigate("CheckIn", {
           eventoId: params.id,
@@ -41,22 +45,33 @@ const Scanner = ({ navigation, route: { params } }: Props) => {
 
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
-      const { status } = await requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
+      if (!permission?.granted) {
+        await requestPermission();
+      }
     };
 
     getBarCodeScannerPermissions();
   }, []);
 
-  if (hasPermission === null) {
+  if (!permission) {
     return <Text>Requesting for camera permission</Text>;
   }
-  if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+
+  if (!permission.granted) {
+    // Camera permissions are not granted yet
+    return (
+      <View style={styles.container}>
+        <Text style={{ textAlign: "center" }}>
+          Precisamos de sua permissão para mostrar a camera
+        </Text>
+        <Button onPress={requestPermission} title="grant permission" />
+      </View>
+    );
   }
 
   return (
     <View style={styles.container}>
+      <HeaderBar />
       <View style={styles.main}>
         <View style={styles.camera}>
           <Camera

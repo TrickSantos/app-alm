@@ -31,7 +31,7 @@ const Codigo = ({ navigation, route: { params } }: Props) => {
         navigation.navigate("CheckIn", {
           eventoId: params.eventoId,
           clubeId: res.clubeId,
-          usuarioId: res.id,
+          usuario: res,
         });
       }
     });

@@ -4,7 +4,7 @@ import Eventos from "../Eventos";
 import Scanner from "../Scanner";
 import CheckIn from "../CheckIn";
 import Codigo from "../Codigo";
-import { Evento } from "../../types";
+import { Evento, Usuario } from "../../types";
 
 export type AppStackParamsList = {
   Eventos: undefined;
@@ -15,7 +15,7 @@ export type AppStackParamsList = {
   CheckIn: {
     eventoId: number;
     clubeId: number;
-    usuarioId: number;
+    usuario: Usuario;
   };
 };
 

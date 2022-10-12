@@ -28,7 +28,7 @@ const Scanner = ({ navigation, route: { params } }: Props) => {
         navigation.navigate("CheckIn", {
           eventoId: params.id,
           clubeId: res.clubeId,
-          usuarioId: res.id,
+          usuario: res,
         });
       }
     });

@@ -8,17 +8,31 @@ import { useAuth } from "../../contexts/Authentication";
 
 type Props = NativeStackScreenProps<AppStackParamsList, "CheckIn">;
 
-const CheckIn = ({ navigation, route: { params } }: Props) => {
+const CheckIn = ({
+  navigation,
+  route: {
+    params: { clubeId, eventoId, usuario },
+  },
+}: Props) => {
   const { socket } = useAuth();
+  console.log(usuario);
 
   const onConfirm = () => {
-    socket.emit("presenca:create", params, (res: any) => {
-      if (res.status === "error") {
-        navigation.popToTop();
-      } else {
-        navigation.popToTop();
+    socket.emit(
+      "presenca:create",
+      {
+        clubeId,
+        eventoId,
+        usuarioId: usuario.id,
+      },
+      (res: any) => {
+        if (res.status === "error") {
+          navigation.popToTop();
+        } else {
+          navigation.popToTop();
+        }
       }
-    });
+    );
   };
 
   return (
@@ -30,6 +44,8 @@ const CheckIn = ({ navigation, route: { params } }: Props) => {
           <Text style={S.cardText}>Confirmado</Text>
         </View>
         <View style={S.buttonContainer}>
+          <Text style={S.nameText}>{usuario.nome}</Text>
+          <Text style={S.nameText}>{usuario.clube.nome}</Text>
           <TouchableOpacity style={S.button} onPress={onConfirm}>
             <Text style={S.buttonText}>OK</Text>
           </TouchableOpacity>

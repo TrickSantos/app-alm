@@ -9,6 +9,7 @@ import React, {
   useState,
 } from "react";
 import { io, Socket } from "socket.io-client";
+import Constants from "expo-constants";
 import { Usuario } from "../types";
 
 type Props = {
@@ -36,21 +37,25 @@ export const AuthtenticationProvider: React.FC<Props> = ({ children }) => {
   const [usuario, setUsuario] = useState<Usuario | null>(
     storageUser ? JSON.parse(storageUser) : null
   );
+
   const [token, setToken] = useState(storageToken);
-  const socket = io("ws://localhost:3333", {
-    autoConnect: false,
-    auth: { token },
-    extraHeaders: {
-      Authorization: `Bearer ${token}`,
-    },
-    transportOptions: {
-      polling: {
-        extraHeaders: {
-          Authorization: `Bearer ${token}`,
+  const socket = io(
+    __DEV__ ? "ws://localhost:3333" : "wss://api-alm.server.sysirius.com",
+    {
+      autoConnect: false,
+      auth: { token },
+      extraHeaders: {
+        Authorization: `Bearer ${token}`,
+      },
+      transportOptions: {
+        polling: {
+          extraHeaders: {
+            Authorization: `Bearer ${token}`,
+          },
         },
       },
-    },
-  });
+    }
+  );
 
   useEffect(() => {
     socket.connect();

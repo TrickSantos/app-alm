@@ -32,6 +32,7 @@ const Login = ({ navigation }: Props) => {
               iconPrefix={
                 <FontAwesome5 name="user-alt" size={18} color="#CCCCCC" />
               }
+              keyboardType="email-address"
               value={email}
               onChangeText={setEmail}
             />

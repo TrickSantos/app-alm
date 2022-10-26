@@ -15,11 +15,19 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AppStackParamsList } from "../Routes/app.routes";
 import { useAuth } from "../../contexts/Authentication";
 import { Evento } from "../../types";
+import { useToast } from "react-native-toast-notifications";
 
 type Props = NativeStackScreenProps<AppStackParamsList, "Eventos">;
 const Item = ({ item, onPress }: any) => {
+  const toast = useToast();
+
   return (
-    <TouchableOpacity style={S.item} onPress={onPress}>
+    <TouchableOpacity
+      style={S.item}
+      onPress={() => {
+        item.ativo ? onPress() : toast.show("Evento não liberado");
+      }}
+    >
       <Text style={S.itemText}>{item.nome}</Text>
       {item.ativo ? (
         <AntDesign name="right" size={24} color="#CCCCCC" />

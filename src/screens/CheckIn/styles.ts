@@ -5,7 +5,7 @@ const style = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     paddingHorizontal: "5%",
-    paddingVertical: "20%",
+    paddingBottom: "10%",
     backgroundColor: "#F2621A",
   },
   main: {
@@ -55,6 +55,7 @@ const style = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 50,
     marginBottom: 50,
+    marginTop: 50,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -62,7 +63,6 @@ const style = StyleSheet.create({
     },
     shadowOpacity: 0.23,
     shadowRadius: 2.62,
-
     elevation: 4,
   },
   buttonText: {

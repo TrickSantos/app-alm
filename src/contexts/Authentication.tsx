@@ -40,7 +40,7 @@ export const AuthtenticationProvider: React.FC<Props> = ({ children }) => {
 
   const [token, setToken] = useState(storageToken);
   const socket = io(
-    /* __DEV__ ? "ws://localhost:3333" : */ "wss://api-alm.server.sysirius.com",
+    __DEV__ ? "ws://localhost:3000" : "wss://api-alm.server.sysirius.com",
     {
       autoConnect: false,
       auth: { token },

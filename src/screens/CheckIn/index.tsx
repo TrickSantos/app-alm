@@ -20,23 +20,13 @@ const CheckIn = ({
   const toast = useToast();
 
   const onConfirm = () => {
-    socket.emit(
-      "presenca:create",
-      {
-        clubeId,
-        eventoId,
-        usuarioId: usuario.id,
-      },
-      (res: any) => {
-        if (res.status === "error") {
-          toast.show("Erro ao confirmar presença", { type: "danger" });
-          navigation.goBack();
-        } else {
-          toast.show("Presença confirmada!", { type: "sucess" });
-          navigation.goBack();
-        }
-      }
-    );
+    socket.emit("presenca:create", {
+      clubeId,
+      eventoId,
+      usuarioId: usuario.id,
+    });
+    toast.show("Presença confirmada!", { type: "sucess" });
+    navigation.goBack();
   };
 
   return (

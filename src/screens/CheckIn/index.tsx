@@ -30,10 +30,10 @@ const CheckIn = ({
       (res: any) => {
         if (res.status === "error") {
           toast.show("Erro ao confirmar presença", { type: "danger" });
-          navigation.popToTop();
+          navigation.goBack();
         } else {
           toast.show("Presença confirmada!", { type: "sucess" });
-          navigation.popToTop();
+          navigation.goBack();
         }
       }
     );

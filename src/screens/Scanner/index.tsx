@@ -1,5 +1,5 @@
 import { View, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { Constants } from "expo-barcode-scanner";
 import { AntDesign } from "@expo/vector-icons";
 import styles from "./styles";
@@ -9,6 +9,7 @@ import { AppStackParamsList } from "../Routes/app.routes";
 import { useAuth } from "../../contexts/Authentication";
 import HeaderBar from "../../components/HeaderBar";
 import { useToast } from "react-native-toast-notifications";
+import { Evento } from "../../types";
 
 type Props = NativeStackScreenProps<AppStackParamsList, "Scanner">;
 
@@ -18,7 +19,6 @@ const Scanner = ({ navigation, route: { params } }: Props) => {
 
   const onBarCodeScanned = (res: BarCodeScanningResult) => {
     console.log("escaneado");
-    console.log(res.data);
     socket.emit("usuario:find", res.data, (res: any) => {
       if (res.status === "error") {
         res.message.forEach((msg: string) =>
@@ -41,6 +41,14 @@ const Scanner = ({ navigation, route: { params } }: Props) => {
     navigation.navigate("Codigo", {
       eventoId: params.id,
     });
+
+  useEffect(() => {
+    socket.emit("evento:find", params.id, (res: Evento) => {
+      if (!res.ativo) {
+        navigation.popToTop();
+      }
+    });
+  }, []);
 
   return (
     <View style={styles.container}>

@@ -42,7 +42,7 @@ const Codigo = ({ navigation, route: { params } }: Props) => {
         );
         navigation.goBack();
       } else {
-        navigation.navigate("CheckIn", {
+        navigation.replace("CheckIn", {
           eventoId: params.eventoId,
           clubeId: res.clubeId,
           usuario: res,
